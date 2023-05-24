@@ -1,54 +1,47 @@
 <template>
-  <div class="home">
-    <dv-full-screen-container>
-      <ModuleTitle></ModuleTitle>
-      <ModuleMain></ModuleMain>
-     <!--  <ModuleBottom></ModuleBottom> -->
-       
-    </dv-full-screen-container>
-  </div>
+    <div class="module_box">
+        <div class="box_left1">
+          <dv-border-box-11 class="box box1" title="创新创业团队注册分布">
+            <!-- 胶囊组件 -->
+            <capsuleChart :dataChart="capsuleChartData"></capsuleChart>
+          </dv-border-box-11>
+          <dv-border-box-1 class="box box2">
+            <dv-water-level-pond class="water-level-pond" :config="config3" />
+          </dv-border-box-1>
+          <dv-border-box-1 class="box box2">
+            <dv-water-level-pond class="water-level-pond" :config="config3" />
+          </dv-border-box-1>
+        </div>
+        <div class="box_center1">
+          <dv-border-box-11 class="box box3" title="地图分布">
+            <dv-flyline-chart :config="config2" :dev="true" style="width:100%;height:100%;"/>
+          </dv-border-box-11>
+        </div>
+        <div class="box_right1">
+          <dv-border-box-8 class="box box4">
+            <lineChart></lineChart>
+          </dv-border-box-8>
+          <dv-border-box-8 :reverse="true" class="box box5">
+            <dv-conical-column-chart :config="config5"/>
+          </dv-border-box-8>
+        </div>
+      </div>
 </template>
-
 <script>
-//导入模块
-import ModuleTitle from "./ModuleTitle.vue"
-import ModuleMain from "./ModuleMain.vue"
-import ModuleBottom from "./ModuleBottom.vue"
-
+import capsuleChart from './capsule-chart.vue'
+import lineChart from './line-chart.vue'
 export default {
-  name: 'Home',
-  components:{
-    ModuleTitle,
-    ModuleMain,
-    ModuleBottom
-  },
+    components:{
+        capsuleChart,
+        lineChart
+    },
   data() {
     return {
-      config1:{
-        data: [
-          {
-            name: '南阳',
-            value: 167
-          },
-          {
-            name: '周口',
-            value: 67
-          },
-          {
-            name: '漯河',
-            value: 123
-          },
-          {
-            name: '郑州',
-            value: 55
-          },
-          {
-            name: '西峡',
-            value: 98
-          }
-        ],
-        showValue: true
+      style:{
+        
       },
+        capsuleChartData:{},
+            
       config2:{
         centerPoint: [0.48, 0.35],
         points: [
@@ -204,37 +197,26 @@ export default {
         ],
         showValue: true
       },
-      config6:{
-        radius: '40%',
-        activeRadius: '45%',
-        data: [
-          {
-            name: '周口',
-            value: 55
-          },
-          {
-            name: '南阳',
-            value: 120
-          },
-          {
-            name: '西峡',
-            value: 78
-          },
-          {
-            name: '驻马店',
-            value: 66
-          },
-          {
-            name: '新乡',
-            value: 80
-          }
-        ],
-        digitalFlopStyle: {
-          fontSize: 20
-        },
-        showOriginValue: true
-      }
+      timer:null
     }
-  }
+  },
+  mounted(){
+        this.getCapsuleChart()
+        this.timer = window.setInterval(()=>{
+            setTimeout(this.getCapsuleChart(),0)
+        },5000)
+    },
+    destroyed(){
+        window.clearInterval(this.timer)
+    },
+    methods:{
+        getCapsuleChart(){
+            this.$axios.get('/mock/getCapsuleList').then((res)=>{
+                this.capsuleChartData= res.data;
+            }).catch((err)=>{
+                console.log(err)
+            })
+        }
+    }
 }
 </script>
